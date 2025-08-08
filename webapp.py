@@ -66,6 +66,27 @@ audio_pairs_preview = [
         "https://drive.google.com/file/d/1_wRbABYz12Ep-uZ4BPHYWkbK-eG1QxC8/preview",
         "https://drive.google.com/file/d/1LnwKy4llwTLW8c_f-fvtDE5eITBab5VB/preview"
     ),
+    
+    (
+        "https://drive.google.com/file/d/1-2zF1gw_Yc7u5SSFoOE059SpJFJ7wLsv/preview",
+        "https://drive.google.com/file/d/1sYyXcA_sU2Yqdh1VypGe3zgrBxQyQU4H/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1BLiu6hJPPMra_Zbv-iGpQYW5upwU2yfQ/preview",
+        "https://drive.google.com/file/d/1PQSuq5T1XCEcfgWPu-23Db4wi-0I1f2R/preview"
+    ),
+    
+     (
+        "https://drive.google.com/file/d/1KU7_O8q5sYXVw5aWKQ2t6-1JoReetoTd/preview",
+        "https://drive.google.com/file/d/128ZQk0CreUM6PQcov1iSQq786iXin65a/preview"
+    ),
+    
+     (
+        "https://drive.google.com/file/d/1-Hv3cQ0ZiubTwuOtwX26V0xUmppAVGqQ/preview",
+        "https://drive.google.com/file/d/1e6fqQpybxKDQpVfM2prTO7abzd29dLod/preview"
+    ),
+    
 ]
 
 
