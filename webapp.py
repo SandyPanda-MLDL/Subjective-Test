@@ -1,4 +1,5 @@
-import requests  # corrected import (plural)
+import json
+import requests
 import streamlit as st
 import gspread
 from google.oauth2.service_account import Credentials
@@ -8,13 +9,15 @@ SCOPE = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/drive"
 ]
-CREDS_FILE = "credentials.json"  # Your service account JSON file
+
 SPREADSHEET_NAME = "SubjectiveTestResults"  # Your Google Sheet name
 
-# Authenticate Google Sheets client
+# Authenticate Google Sheets client from Streamlit secrets
 @st.cache_resource(ttl=3600)
 def get_gsheet_client():
-    creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPE)
+    creds_json_str = st.secrets["GS_CREDS_JSON"]  # get the JSON string from secrets
+    creds_dict = json.loads(creds_json_str)       # parse JSON string to dict
+    creds = Credentials.from_service_account_info(creds_dict, scopes=SCOPE)
     client = gspread.authorize(creds)
     return client
 
@@ -49,7 +52,7 @@ audio_pairs = [
 
 def load_audio_bytes(url):
     response = requests.get(url)
-    response.raise_for_status()  # Raise an error on bad status
+    response.raise_for_status()
     return response.content
 
 def main():
