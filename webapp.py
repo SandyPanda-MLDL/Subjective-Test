@@ -159,6 +159,25 @@ audio_pairs_preview = [
 ]
 
 
+
+
+naturalness_samples_preview = [
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+    # Add total 10 samples
+]
+
+
+naturalness_samples = [gdrive_preview_to_direct(url) for url in naturalness_samples_preview]
+
 # Convert preview URLs to direct download URLs
 audio_pairs = [
     (gdrive_preview_to_direct(a1), gdrive_preview_to_direct(a2))
@@ -172,11 +191,12 @@ def load_audio_bytes(url):
 
 def main():
     st.markdown("<h1 style='font-weight:bold;'>Subjective Test</h1>", unsafe_allow_html=True)
-    st.markdown("<h2 style='font-weight:bold; font-size:1.8rem; margin-top:-10px;'>Speaker Anonymization Assessment</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='font-weight:bold; font-size:1.8rem; margin-top:-10px;'>Speaker Anonymization Assessment</h2>",  unsafe_allow_html=True)
+    st.markdown("<h3>Subjective Test Instructions", unsafe_allow_html=True)
 
     st.markdown("""
-    **Subjective Test Instructions :-**
-    - (Disclaimer: The entire test should take no more than 10–15 minutes to complete.)
+    **Test-1 (Speaker Verification Test) :-**
+    - (Disclaimer: The entire test should take no more than 15-20 minutes to complete.)
     - First of all please enter your email address in the box provided below.
     - It is to be noted that loading the page may take some time.
     - For each pair of audio samples provided below, listen to the reference sample (right-hand side) and the test sample (left-hand side).
@@ -185,45 +205,84 @@ def main():
     - If you are unsure then spend some more time analyzing the samples, but still can't make the decision then select "Can't Say". 
     - After entering your response the page may take some time to reload again depending on your internet speed.
     - Each sample lasts 10–15 seconds but there are also some samples having duration 2-3 seconds.
+    """)
+    
+    st.markdown("""
+    **Test-2 (Naturalness and Age Group Estimation Test) :-**
+    - Rate the samples based on their naturalness by giving a score between 1 to 5, where 1 means Very unnatural (sounds highly artificial) and 5 means Very natural (highest naturalness – sounds like the speech was actually produced by a human).
+    - Then try to estimate the age group of the respective speakers. There are three age groups provided: 0-10 years, 11-18 years and more than 18 years. Select any of these three based on your perceptual analysis.
     - Once all responses are done (including email address) then finally press the submission button provided at the end of the page. 
     - Wait until the system confirms a successful submission. If any responses are missing, it will display a list of the unanswered items.
-    """)
+     """)
 
     email = st.text_input("Please enter your email address:", key="email")
 
+    # ---------------- PAIRWISE TEST SECTION ----------------
     if "answers" not in st.session_state:
         st.session_state.answers = [None] * len(audio_pairs)
 
-    # Display audio pairs
+    st.subheader("Test 1 – Speaker Verification Test (Pairwise Test)")
     for i, (audio1_url, audio2_url) in enumerate(audio_pairs):
         st.header(f"Pair {i+1}")
 
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("<h6 style='margin-bottom: 0.2rem;'>Test Sample</h6>", unsafe_allow_html=True)
-            audio1_bytes = load_audio_bytes(audio1_url)
-            st.audio(audio1_bytes, format='audio/wav')
-
+            st.markdown("**Test Sample**")
+            st.audio(load_audio_bytes(audio1_url), format='audio/wav')
         with col2:
-            st.markdown("<h6 style='margin-bottom: 0.2rem;'>Reference Sample</h6>", unsafe_allow_html=True)
-            audio2_bytes = load_audio_bytes(audio2_url)
-            st.audio(audio2_bytes, format='audio/wav')
+            st.markdown("**Reference Sample**")
+            st.audio(load_audio_bytes(audio2_url), format='audio/wav')
 
         st.session_state.answers[i] = st.radio(
             "Do these two audios belong to the same speaker?",
             ("Yes", "No", "Can't Say"),
-            key=f"pair_{i}",
             index=(
                 0 if st.session_state.answers[i] == "Yes"
                 else 1 if st.session_state.answers[i] == "No"
                 else 2 if st.session_state.answers[i] == "Can't Say"
                 else None
             ),
+            key=f"pair_{i}"
         )
-
         st.markdown("---")
 
-    # --- Place button at the very end ---
+    # ---------------- NATURALNESS & AGE GROUP SECTION ----------------
+    if "naturalness" not in st.session_state:
+        st.session_state.naturalness = [None] * len(naturalness_samples)
+    if "agegroup" not in st.session_state:
+        st.session_state.agegroup = [None] * len(naturalness_samples)
+
+    st.subheader("Test 2 – Naturalness & Age Group Evaluation")
+    st.markdown("""
+    **Naturalness rating: (in a scale 1-5)**  
+    1 = Very unnatural (sounds highly artificial)  
+    5 = Very natural (highest naturalness – sounds like the speech is actually produced by a human)  
+    """)
+
+    for i, audio_url in enumerate(naturalness_samples):
+        st.header(f"Sample {i+1}")
+        st.audio(load_audio_bytes(audio_url), format='audio/wav')
+
+        st.session_state.naturalness[i] = st.slider(
+            "Rate the naturalness",
+            1, 5,
+            value=st.session_state.naturalness[i] if st.session_state.naturalness[i] else 3,
+            key=f"nat_{i}"
+        )
+
+        st.session_state.agegroup[i] = st.selectbox(
+            "Select the perceived age group",
+            ["0–10 years", "11–18 years", "More than 18 years"],
+            index=(
+                ["0–10 years", "11–18 years", "More than 18 years"].index(st.session_state.agegroup[i])
+                if st.session_state.agegroup[i] in ["0–10 years", "11–18 years", "More than 18 years"]
+                else 2
+            ),
+            key=f"age_{i}"
+        )
+        st.markdown("---")
+
+    # ---------------- SUBMISSION ----------------
     if st.button("Submit All Responses"):
         missing_info = []
 
@@ -233,28 +292,39 @@ def main():
         elif "@" not in email or "." not in email:
             missing_info.append("Invalid email address format")
 
-        # Check answers
-        unanswered_pairs = [
-            i+1 for i, ans in enumerate(st.session_state.answers)
-            if ans not in ("Yes", "No", "Can't Say")
-        ]
+        # Check unanswered pairwise
+        unanswered_pairs = [i+1 for i, ans in enumerate(st.session_state.answers) if ans not in ("Yes", "No", "Can't Say")]
         if unanswered_pairs:
             missing_info.append(f"Unanswered pairs: {', '.join(map(str, unanswered_pairs))}")
+
+        # Check unanswered naturalness/age
+        unanswered_nat = [i+1 for i, val in enumerate(st.session_state.naturalness) if val is None]
+        unanswered_age = [i+1 for i, val in enumerate(st.session_state.agegroup) if val is None]
+        if unanswered_nat:
+            missing_info.append(f"Missing naturalness ratings: {', '.join(map(str, unanswered_nat))}")
+        if unanswered_age:
+            missing_info.append(f"Missing age group selections: {', '.join(map(str, unanswered_age))}")
 
         if missing_info:
             st.error("Please check the following before submitting:\n- " + "\n- ".join(missing_info))
         else:
-            # Submit to Google Sheets
             sheet = open_sheet()
+            # Save pairwise
             for i, (audio1_url, audio2_url) in enumerate(audio_pairs):
-                pair_id = i + 1
-                row = [email, pair_id, audio1_url, audio2_url, st.session_state.answers[i]]
+                row = [email, f"Pair_{i+1}", audio1_url, audio2_url, st.session_state.answers[i], "", ""]
                 sheet.append_row(row)
+            # Save naturalness/age
+            for i, audio_url in enumerate(naturalness_samples):
+                row = [email, f"Sample_{i+1}", audio_url, "", "", st.session_state.naturalness[i], st.session_state.agegroup[i]]
+                sheet.append_row(row)
+
             st.success("✅ All responses recorded in Google Sheets! Thank you.")
             st.session_state.answers = [None] * len(audio_pairs)
-
+            st.session_state.naturalness = [None] * len(naturalness_samples)
+            st.session_state.agegroup = [None] * len(naturalness_samples)
 
 if __name__ == "__main__":
     main()
+
 
 
