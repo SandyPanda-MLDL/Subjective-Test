@@ -138,15 +138,17 @@ def main():
            
         answer = st.radio(
             "Do these two audios belong to the same speaker?",
-            ("Yes", "No"),
+            ("Yes", "No", "Can't Say"),
             key=f"pair_{i}",
-            index=0 if st.session_state.answers[i] == "Yes" else 1 if st.session_state.answers[i] == "No" else None
-        )
+            index=(0 if st.session_state.answers[i] == "Yes" else 1 if st.session_state.answers[i] == "No" else 2 if      st.session_state.answers[i] == "Can't Say"
+        else None),
+            )
         st.session_state.answers[i] = answer
 
         st.markdown("---")
 
-    all_answered = all(ans in ("Yes", "No") for ans in st.session_state.answers)
+    all_answered = all(ans in ("Yes", "No", "Can't Say") for ans in st.session_state.answers)
+
     email_entered = email.strip() != "" and "@" in email and "." in email
 
     if all_answered and email_entered:
