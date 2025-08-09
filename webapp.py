@@ -172,18 +172,15 @@ def load_audio_bytes(url):
 
 def main():
     st.markdown("<h1 style='font-weight:bold;'>Subjective Test</h1>", unsafe_allow_html=True)
-    # Even bigger and bold heading for "Speaker Anonymization Assessment Test"
     st.markdown("<h2 style='font-weight:bold; font-size:1.8rem; margin-top:-10px;'>Speaker Anonymization Assessment</h2>", unsafe_allow_html=True)
-
 
     st.markdown("""
     **Subjective Test Instructions :-**
-    
     - First of all please enter your email address in the box provided below.
     - For each pair of audio samples provided below, listen to the reference sample (right-hand side) and the test sample (left-hand side).
-    - Please indicate "Yes" or "No" to specify whether both samples belong to the same speaker or two different speakers. If you are unsure, you may select "Can't say"; however, it is advisable to spend some additional time analyzing the samples to make your judgment as accurate as possible. If uncertainty remains, you may leave it as "Can't say".
-    - Each sample has a duration ranging from 10 to 15 seconds.
- 
+    - Please indicate "Yes" or "No" to specify whether both samples belong to the same speaker or two different speakers.
+    - If you are unsure, select "Can't Say". Spend some time analyzing the samples for accuracy.
+    - Each sample lasts 10–15 seconds.
     """)
 
     email = st.text_input("Please enter your email address:", key="email")
@@ -191,6 +188,7 @@ def main():
     if "answers" not in st.session_state:
         st.session_state.answers = [None] * len(audio_pairs)
 
+    # Display audio pairs
     for i, (audio1_url, audio2_url) in enumerate(audio_pairs):
         st.header(f"Pair {i+1}")
 
@@ -199,39 +197,58 @@ def main():
             st.markdown("<h6 style='margin-bottom: 0.2rem;'>Test Sample</h6>", unsafe_allow_html=True)
             audio1_bytes = load_audio_bytes(audio1_url)
             st.audio(audio1_bytes, format='audio/wav')
-            
+
         with col2:
             st.markdown("<h6 style='margin-bottom: 0.2rem;'>Reference Sample</h6>", unsafe_allow_html=True)
             audio2_bytes = load_audio_bytes(audio2_url)
             st.audio(audio2_bytes, format='audio/wav')
-           
-        answer = st.radio(
+
+        st.session_state.answers[i] = st.radio(
             "Do these two audios belong to the same speaker?",
             ("Yes", "No", "Can't Say"),
             key=f"pair_{i}",
-            index=(0 if st.session_state.answers[i] == "Yes" else 1 if st.session_state.answers[i] == "No" else 2 if      st.session_state.answers[i] == "Can't Say"
-        else None),
-            )
-        st.session_state.answers[i] = answer
+            index=(
+                0 if st.session_state.answers[i] == "Yes"
+                else 1 if st.session_state.answers[i] == "No"
+                else 2 if st.session_state.answers[i] == "Can't Say"
+                else None
+            ),
+        )
 
         st.markdown("---")
 
-    all_answered = all(ans in ("Yes", "No", "Can't Say") for ans in st.session_state.answers)
+    # --- Place button at the very end ---
+    if st.button("Submit All Responses"):
+        missing_info = []
 
-    email_entered = email.strip() != "" and "@" in email and "." in email
+        # Check email
+        if email.strip() == "":
+            missing_info.append("Email address is missing")
+        elif "@" not in email or "." not in email:
+            missing_info.append("Invalid email address format")
 
-    if all_answered and email_entered:
-        if st.button("Submit All Responses"):
+        # Check answers
+        unanswered_pairs = [
+            i+1 for i, ans in enumerate(st.session_state.answers)
+            if ans not in ("Yes", "No", "Can't Say")
+        ]
+        if unanswered_pairs:
+            missing_info.append(f"Unanswered pairs: {', '.join(map(str, unanswered_pairs))}")
+
+        if missing_info:
+            st.error("Please check the following before submitting:\n- " + "\n- ".join(missing_info))
+        else:
+            # Submit to Google Sheets
             sheet = open_sheet()
             for i, (audio1_url, audio2_url) in enumerate(audio_pairs):
                 pair_id = i + 1
                 row = [email, pair_id, audio1_url, audio2_url, st.session_state.answers[i]]
                 sheet.append_row(row)
-            st.success("All responses recorded in Google Sheets! Thank you.")
+            st.success("✅ All responses recorded in Google Sheets! Thank you.")
             st.session_state.answers = [None] * len(audio_pairs)
-    else:
-        st.info("Please answer all pairs and enter a valid email to submit.")
+
 
 if __name__ == "__main__":
     main()
+
 
