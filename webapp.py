@@ -73,7 +73,7 @@ audio_pairs_preview = [
     ),
     
     (
-        "https://drive.google.com/file/d/1BLiu6hJPPMra_Zbv-iGpQYW5upwU2yfQ/preview",
+        "https://drive.google.com/file/d/1xTdKZa5tizzf7TYs4vUwuOpc56f_P9H8/preview",
         "https://drive.google.com/file/d/1PQSuq5T1XCEcfgWPu-23Db4wi-0I1f2R/preview"
     ),
     
@@ -99,7 +99,7 @@ audio_pairs_preview = [
     
     (
         "https://drive.google.com/file/d/1hJkE4dtmZctHKpiMamWAoLeKslnm6TDd/preview",
-        "https://drive.google.com/file/d/1jgtyzEICgI0zR3ahEQt17EX2dXt1hrlC/preview"
+        "https://drive.google.com/file/d/1KWmFwTYXZP0Ya0D2BbGWOv-Zjtk7er1o/preview"
     ),
     
     (
@@ -108,7 +108,7 @@ audio_pairs_preview = [
     ),
     
     (
-        "https://drive.google.com/file/d/1RWveK2P58VE3N8rVcoQ-btuAI1rp8Tky/preview",
+        "https://drive.google.com/file/d/1cm7TyXl962Q8xe5DK7PgRW9qCXDSxE4z/preview",
         "https://drive.google.com/file/d/1uBX34G0vI0UxH1cTYC6s8BsZGwTxcGQD/preview"
     ),
     
@@ -176,11 +176,17 @@ def main():
 
     st.markdown("""
     **Subjective Test Instructions :-**
+    - (Disclaimer: The entire test should take no more than 10–15 minutes to complete.)
     - First of all please enter your email address in the box provided below.
+    - It is to be noted that loading the page may take some time.
     - For each pair of audio samples provided below, listen to the reference sample (right-hand side) and the test sample (left-hand side).
+    - Please remember that the test samples can be natural sample (without any modification) or modified sample (modified using some anonymization algorithm).
     - Please indicate "Yes" or "No" to specify whether both samples belong to the same speaker or two different speakers.
-    - If you are unsure, select "Can't Say". Spend some time analyzing the samples for accuracy.
-    - Each sample lasts 10–15 seconds.
+    - If you are unsure then spend some more time analyzing the samples, but still can't make the decision then select "Can't Say". 
+    - After entering your response the page may take some time to reload again depending on your internet speed.
+    - Each sample lasts 10–15 seconds but there are also some samples having duration 2-3 seconds.
+    - Once all responses are done (including email address) then finally press the submission button provided at the end of the page. 
+    - Wait until the system confirms a successful submission. If any responses are missing, it will display a list of the unanswered items.
     """)
 
     email = st.text_input("Please enter your email address:", key="email")
