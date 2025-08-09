@@ -87,6 +87,75 @@ audio_pairs_preview = [
         "https://drive.google.com/file/d/1e6fqQpybxKDQpVfM2prTO7abzd29dLod/preview"
     ),
     
+    (
+        "https://drive.google.com/file/d/1LniRcqZQ4ykOT7L75WhL9Wq66PlSVS76/preview",
+        "https://drive.google.com/file/d/1a_H92cEoSukvoW4YvZjnSniQtYKxqkLS/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1ApWYjiKQ4JAHwoHlBC3d0dQSp_Z6RlHQ/preview",
+        "https://drive.google.com/file/d/1ydcsfslENdLHVl9Yn7_zJMOued2Lg_ZN/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1hJkE4dtmZctHKpiMamWAoLeKslnm6TDd/preview",
+        "https://drive.google.com/file/d/1jgtyzEICgI0zR3ahEQt17EX2dXt1hrlC/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1k2MstIwtV6Lr_tXVe5Pu3UZ9uM_Lg1Bn/preview",
+        "https://drive.google.com/file/d/17h-wDx06f-UtPljw_Se5hVDbD0u0259K/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1RWveK2P58VE3N8rVcoQ-btuAI1rp8Tky/preview",
+        "https://drive.google.com/file/d/1uBX34G0vI0UxH1cTYC6s8BsZGwTxcGQD/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1LfblnfvLc_81XJeciUjngAe-iiamM4LG/preview",
+        "https://drive.google.com/file/d/1ozOlUDkDonYzBSn5G0pHzscpx5txmMjv/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1mRxJqCqG591reJjIXN1UyXmdaIYaAnp_/preview",
+        "https://drive.google.com/file/d/1HLkbq-BbvpueaCtQx5MUgnh8lweXxdvo/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1yGBg6Kep4F4tlB90TnOswoqMGgFHCzJr/preview",
+        "https://drive.google.com/file/d/1RhR-PTJRkbnWa2Iuhl6ZhlQlW1MtlAMw/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1qgug4w54FcZCQExXzrY2hqS9ECL7XWB8/preview",
+        "https://drive.google.com/file/d/13jHuTW-KZrX5ZDelPX5pfxif5f9LfI4b/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/11j2ylrGceVY6SnGBUjWkT76jcWLROP-B/preview",
+        "https://drive.google.com/file/d/10EMdF0qPG6Bfky54JRmKy7pR-AvBdkH-/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1FoK03av-wm8nCb_k6x8jwOQmBoOdo3sv/preview",
+        "https://drive.google.com/file/d/1ggOe-P-RaXz8iGmfgImkjj6oIm2nE02j/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1eVFtt32IIyx-st6HvWIC9NPJiNeMGldn/preview",
+        "https://drive.google.com/file/d/1KWT3ryCMrPn-1qAGAL-YRsVOftcuc-Oe/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1-b8vOxa7j4ENA9_OT0S5Ibbn8aFwAABG/preview",
+        "https://drive.google.com/file/d/1I4Uk4HbgxzvWKoZikao8qLPzO5dqtxN2/preview"
+    ),
+    
+    (
+        "https://drive.google.com/file/d/1cdUXGxTi7U7PhVtlpSvB3tH8Z4fPagAo/preview",
+        "https://drive.google.com/file/d/1TaUz8tnBTsCpWkvNnt5Z1WWH3-6MnYqA/preview"
+    ),
 ]
 
 
@@ -112,7 +181,7 @@ def main():
     
     - First of all please enter your email address in the box provided below.
     - For each pair of audio samples provided below, listen to the reference sample (right-hand side) and the test sample (left-hand side).
-    - Please indicate "Yes" or "No" to specify whether both samples belong to the same speaker or two different speakers. 
+    - Please indicate "Yes" or "No" to specify whether both samples belong to the same speaker or two different speakers. If you are unsure, you may select "Can't say"; however, it is advisable to spend some additional time analyzing the samples to make your judgment as accurate as possible. If uncertainty remains, you may leave it as "Can't say".
     - Each sample has a duration ranging from 10 to 15 seconds.
  
     """)
