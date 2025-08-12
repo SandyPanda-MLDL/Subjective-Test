@@ -11,7 +11,6 @@ SCOPE = [
 ]
 SPREADSHEET_NAME = "SubjectiveTestResults"
 
-# Authenticate Google Sheets client from Streamlit secrets
 @st.cache_resource(ttl=3600)
 def get_gsheet_client():
     creds_json_str = st.secrets["GS_CREDS_JSON"]
@@ -25,7 +24,6 @@ def open_sheet():
     sheet = client.open(SPREADSHEET_NAME).sheet1
     return sheet
 
-# Utility to convert Google Drive preview URL to direct download URL
 def gdrive_preview_to_direct(url):
     import re
     match = re.search(r'/d/([a-zA-Z0-9_-]+)', url)
@@ -35,113 +33,186 @@ def gdrive_preview_to_direct(url):
     else:
         return url
 
-# Naturalness sample URLs
-naturalness_samples_preview = [
-    "https://drive.google.com/file/d/1nwytw1t-PUvUHIHKsMjjT6eZWBc117PI/preview",
-    "https://drive.google.com/file/d/1REaYqV_VDn4_m44fe--PkHFWuyHgDwuz/preview",
-    "https://drive.google.com/file/d/1trvIsvNTID-VXSui6syhlIEvGraNReKz/preview",
-    "https://drive.google.com/file/d/1RSsWf9-Wc7mTBgsFdWkkJGc2pVcDpw2H/preview",
-    "https://drive.google.com/file/d/1e-AnCoiNM6txlL8ZFCpBTn6S6EfGDpQ-/preview",
-    "https://drive.google.com/file/d/1ENkLvhBubT6hQ2dYzk0VHFYGhd8BaWxs/preview",
-    "https://drive.google.com/file/d/1H4h6zIMOxeQeUPDkx-8MPxXwQlrZ56WO/preview",
-    "https://drive.google.com/file/d/1GGZNOdpdLfnPtleM8afftByuVJRRCSfP/preview",
-    "https://drive.google.com/file/d/1UQnZNmQhV-7IrjxgV8Gs06qQjIKQy_79/preview",
-    "https://drive.google.com/file/d/1s6dAIMJJvZ_aW6XCRFeeG6AeTdzUiB5v/preview",
-    "https://drive.google.com/file/d/1fi_9ZaO5VtDpoT8jwe6_3WZXnQLKZIUN/preview",
-    "https://drive.google.com/file/d/1SwJWBD1OK6U7aibcT43gDABlEox7KuxE/preview",
-    "https://drive.google.com/file/d/10Z0BGxnXgT6rw5AY-s2TwzzQ4ToA1Vzb/preview",
-    "https://drive.google.com/file/d/1TX4v03JSvqZ1Vk-ZgF8u4bwdde_9gVu8/preview",
-    "https://drive.google.com/file/d/1uqgv1r5wNWzqkSFBzsW4Tg3EqgVjVhV9/preview",
-    "https://drive.google.com/file/d/1oVHm4UCmK15Uiikbc5m028SPdGEwdTkg/preview",
-    "https://drive.google.com/file/d/1Manh3kGFELRKMLH1f8SBVjm-Zk6gva_w/preview",
-    "https://drive.google.com/file/d/1KQj6g1hzYqQebxXnqzNwpQZrjMbIKv0q/preview",
-]
-
-# Convert to direct download links
-naturalness_samples = [gdrive_preview_to_direct(url) for url in naturalness_samples_preview]
-
 def load_audio_bytes(url):
     response = requests.get(url)
     response.raise_for_status()
     return response.content
 
-def main():
-    st.markdown("<h1 style='font-weight:bold;'>Subjective Test</h1>", unsafe_allow_html=True)
-    st.markdown("<h2 style='font-weight:bold; font-size:1.8rem; margin-top:-10px;'>Speaker Naturalness and Age Group Estimation Test</h2>", unsafe_allow_html=True)
+# -------------------------
+# Your audio file structure
+# -------------------------
+# Example: Each set is [reference, test1, test2, test3]
+# Replace these with your real Google Drive preview links
+
+sets_preview = [
+    [
+        "https://drive.google.com/file/d/1PktD0Wjsaryk4QdugY_esP19PNnOgt9G/preview",
+        "https://drive.google.com/file/d/1Nwry4T-8w99GN0s7R2_1xqRT49FckLj1/preview",
+        "https://drive.google.com/file/d/1lbEyPt062AaUvnMn1VFw0QgRfgO36S8S/preview",
+        "https://drive.google.com/file/d/1EpZdO4tQSZLjWnh28LFCgusZheog_U1X/preview"
+    ],
+    [
+        "https://drive.google.com/file/d/1IM1flhHJlUZSb99fJZHgw0qEwzEkCwBv/preview",
+        "https://drive.google.com/file/d/1cJGIKWVLskE3W3z2U-IidO8g_VFKgbSk/preview",
+        "https://drive.google.com/file/d/1W9ZIBUQAWp88zGf8CsWFPJBVC1BTknue/preview",
+        "https://drive.google.com/file/d/1p9scTRz72UD1ukGcAWWw3w_3r8yWhWVb/preview"
+    ],
     
+    [
+        "https://drive.google.com/file/d/1YWeWStbiu6r9UtUgjMkm1WB2lFBJX5zq/preview",
+        "https://drive.google.com/file/d/1V5nsHR75-fsPWgniX2dJtlzUAREbk1lh/preview",
+        "https://drive.google.com/file/d/1AjekLmFs8hbSSJoOR5q_kETeH3a1jMwI/preview",
+        "https://drive.google.com/file/d/1CRUlPuj-OnGFddnZCmPC5BNx8SD92Nfj/preview"
+    ],
+    
+    [
+        "https://drive.google.com/file/d/1PYxQ3qHFdBFMZ60PvFMRV-eL0O0Di7AG/preview",
+        "https://drive.google.com/file/d/1HV4Xp7K1D2ipZWJh1SgdGSfOwgQlPYDG/preview",
+        "https://drive.google.com/file/d/1S88jRjAbRYqrNpEwsz6lC2JG3uBTbMBO/preview",
+        "https://drive.google.com/file/d/1NjLijVxvfmyvc5RtigSA57TEkyT07Duu/preview"
+    ],
+    
+    [
+        "https://drive.google.com/file/d/10m2ckmt8XQYrva2N9gShe2hXpwunazSK/preview",
+        "https://drive.google.com/file/d/1GNtztruj0BxGDWiULUVQAyq47iCq1_pF/preview",
+        "https://drive.google.com/file/d/11TZo7R6rt3qzv3HLgXQWod_Y-aZ6jeqy/preview",
+        "https://drive.google.com/file/d/1vVMsgFBXqhsU7PaViOINMOGaMJE4XuA5/preview"
+    ],
+    
+     [
+        "https://drive.google.com/file/d/1eDHUqYnMdlXmavNUx0NWVz1zlp9ruzu4/preview",
+        "https://drive.google.com/file/d/1Kxl1HTbfMakfOMenGrOEkKWDBQFUBwes/preview",
+        "https://drive.google.com/file/d/1_q4IbXPBt6GZqjD1tafl21lOMnWfgSFu/preview",
+        "https://drive.google.com/file/d/1rXdVPd9lGCaI5rTYXRbfIYPJ7oxonOPO/preview"
+    ],
+    
+     [
+        "https://drive.google.com/file/d/1M2GobP7I5B8sLnFflKcoAtYjbiXIojqw/preview",
+        "https://drive.google.com/file/d/1QIcTo8NgXdDLZqYpMjB9i7LmVd_4wqXK/preview",
+        "https://drive.google.com/file/d/1_u1-YboR0-HrtK7gUFT_cqTWctvVpVY2/preview",
+        "https://drive.google.com/file/d/1Nsfvg69EQXQVvstnl5YIq5lNDargxwS7/preview"
+    ],
+    
+     [
+        "https://drive.google.com/file/d/1Q3vYirAyAL-0TXGf5SLmc7V74qodykiI/preview",
+        "https://drive.google.com/file/d/1bYdQofLqvGauLhPGJn89Qb8uhyQYwzrW/preview",
+        "https://drive.google.com/file/d/1OKzVk5TPHl24r0_1rcqM9XG3pEi1WZI3/preview",
+        "https://drive.google.com/file/d/1jJuJmALlYj4SIZeWRFgTTdWAP8PbBbB2/preview"
+    ],
+    
+     [
+        "https://drive.google.com/file/d/1uVGz_x6uKFzslOI0Q5DJd5YOflmK8Rlf/preview",
+        "https://drive.google.com/file/d/1UxmtS3yJ4_WAZzvVUzs-VqxQ4eG2sbBi/preview",
+        "https://drive.google.com/file/d/1V0C0Ikz-DCKUUmuU9dzlU8EsIta6SgKD/preview",
+        "https://drive.google.com/file/d/1WevddcOA6QiJZrISC1Xt8zTvXywoxkuu/preview"
+    ],
+    
+     [
+        "https://drive.google.com/file/d/1kz5mHhTtYBbjllxPPkwCB2dhe8RllAoc/preview",
+        "https://drive.google.com/file/d/1GVVOC6pxygVVvOl8PfuZJWyovp_iGrGs/preview",
+        "https://drive.google.com/file/d/117l8G-BJ4Y9udVtgiQvFYBdHYAKFFO4r/preview",
+        "https://drive.google.com/file/d/1qHrP4qETPbBs1BOfo8wH6tT0Ve0EWZLA/preview"
+    ],
+    
+     [
+        "https://drive.google.com/file/d/1Do109vDBcfeIpRAZQ-SyshGq7vX4DJAR/preview",
+        "https://drive.google.com/file/d/15Xa5fkQOgIpu6py42mGUk4E0qiAuo8md/preview",
+        "https://drive.google.com/file/d/1DEZNhIkZMtC971oypWq6dCiRq7Z8VoPM/preview",
+        "https://drive.google.com/file/d/1zUOG1d_TlACW8G3M-AjYstLJ2ZJy6jzW/preview"
+    ],
+    
+     [
+        "https://drive.google.com/file/d/1WhigPH2vEtsdn7zGzXtgWYUG3dV9u_WS/preview",
+        "https://drive.google.com/file/d/1M4oYXasMGREu8d-k3nuDBPQEZ1UlJtjO/preview",
+        "https://drive.google.com/file/d/17gx0eRkhjY4lMkOJ_mTzihSiRVVWoReK/preview",
+        "https://drive.google.com/file/d/1ClV2BjPy4eUvZrqMZqsoqQo_72yi8J6G/preview"
+    ],
+    
+    [
+        "https://drive.google.com/file/d/1oVqa-SmLgdDC6T81LVYp01szpY878Qpg/preview",
+        "https://drive.google.com/file/d/1QsKiUjY5wL0XC55Nvy8dwq2WdP5xKg3A/preview",
+        "https://drive.google.com/file/d/1qwgdHCaFCWG87k5ga8Z39vzJRpyJMbFX/preview",
+        "https://drive.google.com/file/d/1JngfZ1rtCsSfQcFoxB0_RWzUe6OfDtpG/preview"
+    ],
+    
+    [
+        "https://drive.google.com/file/d/1DLN1rghwOlU0madKSPEC1RcQnpWV9iI5/preview",
+        "https://drive.google.com/file/d/1WkjqeY-eW9arWqoCMS2lqPGmye_tPmTs/preview",
+        "https://drive.google.com/file/d/1eA6F9aIoyl01t5AcHPiteNvXJOfKciCQ/preview",
+        "https://drive.google.com/file/d/1pEGzWw2Zdzj9lQWE_NJV-tJ3DWvnDwnQ/preview"
+    ],
+    
+    # ... Add until Set 14
+]
+
+# Convert to direct download
+sets_audio = [[gdrive_preview_to_direct(url) for url in set_urls] for set_urls in sets_preview]
+
+# -------------------------
+# Main App
+# -------------------------
+def main():
+    st.markdown("<h1 style='font-weight:bold;'>Reference Speaker Identification Test</h1>", unsafe_allow_html=True)
+
     st.markdown("""
-    **(Naturalness and Age Group Estimation Test) :-**
-    - **Rate the samples based on their naturalness by giving a score between 1 to 5, where 1 means Very unnatural and 5 means Very natural.**
-    - **Then estimate the age group: 0-10 years, 11-18 years, or More than 18 years.**
-    - Enter your email address before submission.
-    - Press "Submit All Responses" after completing all items.
+    **Instructions:**
+    - Each set contains 1 Reference sample and 3 Test samples.
+    - Listen to the Reference sample first.
+    - Then listen to the 3 Test samples.
+    - Select which Test sample matches the Reference speaker's voice.
+    - If you are unsure, we recommend you to give some more time for analysis but still can't make then select **"Can't say"**.
+    - After all sets, click "Submit All Responses".
     """, unsafe_allow_html=True)
 
     email = st.text_input("Please enter your email address:", key="email")
 
-    if "naturalness" not in st.session_state:
-        st.session_state.naturalness = [None] * len(naturalness_samples)
-    if "agegroup" not in st.session_state:
-        st.session_state.agegroup = [None] * len(naturalness_samples)
+    if "choices" not in st.session_state:
+        st.session_state.choices = [None] * len(sets_audio)
 
-    st.subheader("Naturalness & Age Group Estimation Test")
+    for set_idx, audio_urls in enumerate(sets_audio):
+        st.subheader(f"Set {set_idx + 1}")
 
-    for i, audio_url in enumerate(naturalness_samples):
-        st.header(f"Sample {i+1}")
-        st.audio(load_audio_bytes(audio_url), format='audio/wav')
+        st.markdown("**Reference Sample:**")
+        st.audio(load_audio_bytes(audio_urls[0]), format='audio/wav')
 
-        # Slider with labels inside
-        slider_label = "<div style='display:flex; justify-content:space-between;'><span>1 = Very unnatural</span><span>5 = Very natural</span></div>"
-        st.markdown(slider_label, unsafe_allow_html=True)
+        st.markdown("**Test Samples:**")
+        for i in range(1, 4):
+            st.markdown(f"**Test Sample {i}:**")
+            st.audio(load_audio_bytes(audio_urls[i]), format='audio/wav')
 
-        st.session_state.naturalness[i] = st.slider(
-            "",
-            min_value=1,
-            max_value=5,
-            value=st.session_state.naturalness[i] if st.session_state.naturalness[i] else 3,
-            step=1,
-            key=f"nat_{i}",
-            label_visibility="collapsed"
-        )
-
-        st.session_state.agegroup[i] = st.selectbox(
-            "Select the perceived age group",
-            ["0–10 years", "11–18 years", "More than 18 years"],
+        st.session_state.choices[set_idx] = st.radio(
+            "Select the sample that matches the Reference speaker:",
+            options=["1", "2", "3", "Can't say"],
             index=(
-                ["0–10 years", "11–18 years", "More than 18 years"].index(st.session_state.agegroup[i])
-                if st.session_state.agegroup[i] in ["0–10 years", "11–18 years", "More than 18 years"]
-                else 2
+                ["1", "2", "3", "Can't say"].index(st.session_state.choices[set_idx])
+                if st.session_state.choices[set_idx] in ["1", "2", "3", "Can't say"]
+                else 3
             ),
-            key=f"age_{i}"
+            key=f"choice_{set_idx}"
         )
         st.markdown("---")
 
     if st.button("Submit All Responses"):
         missing_info = []
-
         if email.strip() == "":
             missing_info.append("Email address is missing")
         elif "@" not in email or "." not in email:
             missing_info.append("Invalid email address format")
 
-        unanswered_nat = [i+1 for i, val in enumerate(st.session_state.naturalness) if val is None]
-        unanswered_age = [i+1 for i, val in enumerate(st.session_state.agegroup) if val is None]
-        if unanswered_nat:
-            missing_info.append(f"Missing naturalness ratings: {', '.join(map(str, unanswered_nat))}")
-        if unanswered_age:
-            missing_info.append(f"Missing age group selections: {', '.join(map(str, unanswered_age))}")
+        unanswered = [i+1 for i, val in enumerate(st.session_state.choices) if val is None]
+        if unanswered:
+            missing_info.append(f"Missing selections for sets: {', '.join(map(str, unanswered))}")
 
         if missing_info:
             st.error("Please check the following before submitting:\n- " + "\n- ".join(missing_info))
         else:
             sheet = open_sheet()
-            for i, audio_url in enumerate(naturalness_samples):
-                row = [email, f"Sample_{i+1}", audio_url, "", "", st.session_state.naturalness[i], st.session_state.agegroup[i]]
+            for set_idx, choice in enumerate(st.session_state.choices):
+                row = [email, f"Set-{set_idx+1}", choice]
                 sheet.append_row(row)
 
             st.success("✅ All responses recorded in Google Sheets! Thank you.")
-            st.session_state.naturalness = [None] * len(naturalness_samples)
-            st.session_state.agegroup = [None] * len(naturalness_samples)
+            st.session_state.choices = [None] * len(sets_audio)
 
 
 if __name__ == "__main__":
