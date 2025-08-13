@@ -157,9 +157,8 @@ def main():
     st.markdown("""
     **Instructions:**
     - Each set contains 1 Reference sample and 3 Test samples.
-    - Listen to the Reference sample first.
-    - Then listen to the 3 Test samples.
-    - Select which Test sample matches the Reference speaker's voice.
+    - The Test samples are drawn from modified (anonymised) versions of different speakers' utterances including one of the Reference speaker
+    - Please pick the Test sample that you feel is most likely to belong to the Reference speaker. 
     - If you are unsure, we recommend you to give some more time for analysis but still can't make then select **"Can't say"**.
     - After all sets, click "Submit All Responses".
     """, unsafe_allow_html=True)
